@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drought Indices Calculator</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary: #2c7da0;
+        --primary-light: #a9d6e5;
+        --primary-dark: #01497c;
+        --secondary: #61a5c2;
+        --accent: #ff9e00;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --error: #f44336;
+        --light: #f8f9fa;
+        --dark: #212529;
+        --gray: #6c757d;
+        --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #e4e7ec 100%);
+        --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        --hover-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background: var(--bg-gradient);
+        color: var(--dark);
+        line-height: 1.6;
+        min-height: 100vh;
+        padding-bottom: 20px;
+      }
+
+      .container {
+        max-width: 1800px;
+        margin: 0 auto;
+        padding: 0 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      header {
+        background: var(--primary);
+        background: linear-gradient(
+          120deg,
+          var(--primary-dark) 0%,
+          var(--primary) 100%
+        );
+        color: white;
+        padding: 18px 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        position: relative;
+        margin-bottom: 30px;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .logo-icon {
+        font-size: 28px;
+        color: white;
+      }
+
+      .logo-text {
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+      }
+
+      .logo-subtitle {
+        font-size: 14px;
+        opacity: 0.85;
+        font-weight: 300;
+        margin-left: 10px;
+      }
+
+      .app-container {
+        display: grid;
+        grid-template-columns: 1.1fr 2.2fr;
+        gap: 25px;
+      }
+
+      @media (max-width: 1200px) {
+        .app-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: white;
+        border-radius: 16px;
+        box-shadow: var(--card-shadow);
+        padding: 25px;
+        margin-bottom: 25px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        height: fit-content;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--hover-shadow);
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .card-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .card-title i {
+        color: var(--primary);
+      }
+
+      .card-actions {
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 10px 18px;
+        font-size: 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-dark);
+      }
+
+      .btn-secondary {
+        background: var(--secondary);
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #4a8fa8;
+      }
+
+      .btn-success {
+        background: var(--success);
+        color: white;
+      }
+
+      .btn-success:hover {
+        background: #3d8b40;
+      }
+
+      .btn-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--primary);
+        color: var(--primary);
+      }
+
+      .btn-outline:hover {
+        background: var(--primary-light);
+      }
+
+      .input-area {
+        width: 100%;
+      }
+
+      .input-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .input-label {
+        font-weight: 500;
+        color: var(--dark);
+        font-size: 16px;
+      }
+
+      textarea {
+        width: 100%;
+        height: 180px;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 14px;
+        background: var(--light);
+        color: var(--dark);
+        resize: vertical;
+        transition: all 0.3s;
+        line-height: 1.5;
+      }
+
+      textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(44, 125, 160, 0.2);
+      }
+
+      .input-help {
+        margin-top: 12px;
+        font-size: 13px;
+        color: var(--gray);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .stat-card {
+        background: var(--light);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .stat-value {
+        font-weight: 700;
+        font-size: 24px;
+        color: var(--primary-dark);
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: var(--gray);
+      }
+
+      .table-container {
+        overflow-x: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        margin-top: 15px;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 14px;
+      }
+
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      th {
+        background: var(--primary);
+        color: white;
+        padding: 14px 12px;
+        text-align: center;
+        font-weight: 500;
+        border: none;
+      }
+
+      th:first-child {
+        border-top-left-radius: 12px;
+      }
+
+      th:last-child {
+        border-top-right-radius: 12px;
+      }
+
+      td {
+        padding: 12px;
+        text-align: center;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:last-child td:first-child {
+        border-bottom-left-radius: 12px;
+      }
+
+      tr:last-child td:last-child {
+        border-bottom-right-radius: 12px;
+      }
+
+      tr:hover {
+        background-color: #f1f7fa;
+      }
+
+      .calc-results {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding-right: 5px;
+      }
+
+      /* Custom scrollbar */
+      .calc-results::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      .calc-results::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+
+      .calc-results::-webkit-scrollbar-thumb {
+        background: var(--secondary);
+        border-radius: 10px;
+      }
+
+      .calc-results::-webkit-scrollbar-thumb:hover {
+        background: var(--primary);
+      }
+
+      details {
+        margin-bottom: 15px;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        background: white;
+      }
+
+      summary {
+        padding: 16px 20px;
+        background: var(--light);
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      summary:hover {
+        background: #e6f1f7;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      summary::after {
+        content: "\f078";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        font-size: 14px;
+        transition: transform 0.3s;
+        color: var(--primary);
+      }
+
+      details[open] summary::after {
+        transform: rotate(180deg);
+      }
+
+      .calc-content {
+        padding: 20px;
+        background: white;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 15px;
+      }
+
+      @media (max-width: 768px) {
+        .calc-content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .calc-box {
+        background: var(--light);
+        padding: 16px;
+        border-radius: 10px;
+        border-left: 4px solid var(--primary);
+        font-family: "Consolas", "Monaco", monospace;
+        font-size: 13px;
+        white-space: pre-line;
+        transition: transform 0.2s;
+      }
+
+      .calc-box:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      }
+
+      .index-name {
+        font-weight: 600;
+        color: var(--primary-dark);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .index-formula {
+        color: var(--dark);
+        margin-bottom: 8px;
+        display: block;
+      }
+
+      .index-calculation {
+        color: var(--gray);
+        margin-bottom: 8px;
+        display: block;
+        font-style: italic;
+      }
+
+      .index-value {
+        font-weight: 700;
+        color: var(--primary);
+        font-size: 15px;
+        display: block;
+        margin-top: 8px;
+        padding-top: 8px;
+        border-top: 1px dashed #ddd;
+      }
+
+      .index-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        margin-left: 10px;
+      }
+
+      .badge-high {
+        background: rgba(244, 67, 54, 0.15);
+        color: var(--error);
+      }
+
+      .badge-medium {
+        background: rgba(255, 152, 0, 0.15);
+        color: var(--warning);
+      }
+
+      .badge-low {
+        background: rgba(76, 175, 80, 0.15);
+        color: var(--success);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        padding: 15px 22px;
+        background: var(--dark);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 1000;
+        transform: translateY(100px);
+        opacity: 0;
+        transition: all 0.3s;
+        max-width: 350px;
+      }
+
+      .toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      .toast.success {
+        background: var(--success);
+      }
+
+      .toast.error {
+        background: var(--error);
+      }
+
+      .toast.warning {
+        background: var(--warning);
+        color: var(--dark);
+      }
+
+      .toast i {
+        font-size: 18px;
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .help-text {
+        color: var(--gray);
+        font-size: 14px;
+        text-align: center;
+        padding: 30px 20px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 25px 0;
+        margin-top: 40px;
+        color: var(--gray);
+        font-size: 14px;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+      }
+
+      .tabs {
+        display: flex;
+        gap: 5px;
+        background: var(--light);
+        padding: 5px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.3s;
+        text-align: center;
+        flex: 1;
+      }
+
+      .tab.active {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .highlight-box {
+        background: linear-gradient(135deg, #e6f7ff 0%, #f0f9eb 100%);
+        border-left: 4px solid var(--success);
+        padding: 20px;
+        border-radius: 12px;
+        margin: 20px 0;
+      }
+
+      .highlight-title {
+        font-weight: 600;
+        color: var(--primary-dark);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .highlight-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+      }
+
+      .highlight-item {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
+
+      .highlight-value {
+        font-weight: 700;
+        font-size: 22px;
+        color: var(--primary);
+        margin-bottom: 5px;
+      }
+
+      .highlight-label {
+        font-size: 13px;
+        color: var(--gray);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-content">
+          <div class="logo">
+            <i class="fas fa-cloud-sun-rain logo-icon"></i>
+            <div>
+              <div class="logo-text">Drought Indices Calculator</div>
+              <div class="logo-subtitle">
+                Advanced analysis for agricultural research
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <div class="app-container">
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-pencil-alt"></i> Input Data
+              </h2>
+              <div class="card-actions">
+                <button class="btn btn-secondary" id="exampleBtn">
+                  <i class="fas fa-lightbulb"></i> Example
+                </button>
+                <button class="btn btn-secondary" id="clearBtn">
+                  <i class="fas fa-trash"></i> Clear
+                </button>
+              </div>
+            </div>
+            <div class="input-area">
+              <div class="input-header">
+                <label class="input-label">Paste Data (Genotype Yp Ys)</label>
+              </div>
+              <textarea
+                id="dataInput"
+                placeholder="Example:
+Gen1 4.5 3.2
+Gen2 5.1 4.0
+Gen3 3.8 2.6
+Gen4 6.2 4.5
+Gen5 5.8 3.9"
+              ></textarea>
+              <div class="input-help">
+                <i class="fas fa-info-circle"></i> Enter one genotype per line
+                with format: Name Yp Ys
+              </div>
+            </div>
+            <button
+              class="btn btn-primary"
+              onclick="calculate()"
+              id="calculateBtn"
+              style="margin-top: 20px; width: 100%"
+            >
+              <i class="fas fa-calculator"></i> Calculate Indices
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-chart-line"></i> Results Overview
+              </h2>
+              <div class="card-actions">
+                <button class="btn btn-success" id="exportBtn" disabled>
+                  <i class="fas fa-download"></i> Export
+                </button>
+              </div>
+            </div>
+            <div id="summaryOutput">
+              <div class="help-text">Calculate to see results overview</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-table"></i> Data Table
+              </h2>
+              <div class="card-actions">
+                <div class="btn-group">
+                  <button class="btn btn-outline" id="sortAlphaBtn" disabled>
+                    <i class="fas fa-sort-alpha-down"></i> A-Z
+                  </button>
+                  <button class="btn btn-outline" id="sortYpBtn" disabled>
+                    <i class="fas fa-sort-numeric-down"></i> Yp
+                  </button>
+                  <button class="btn btn-outline" id="sortYsBtn" disabled>
+                    <i class="fas fa-sort-numeric-down"></i> Ys
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="table-container">
+              <div id="tableOutput"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h2 class="card-title">
+                <i class="fas fa-calculator"></i> Calculations & Formulas
+              </h2>
+            </div>
+            <div class="calc-results" id="calcOutput"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <footer>
+      <div class="container">
+        <p>
+          Drought Indices Calculator v2.0 | Advanced Agricultural Analytics |
+          &copy; 2023
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Example data button
+      document.getElementById("exampleBtn").addEventListener("click", () => {
+        document.getElementById("dataInput").value = `Gen1 4.5 3.2
+Gen2 5.1 4.0
+Gen3 3.8 2.6
+Gen4 6.2 4.5
+Gen5 5.8 3.9
+Gen6 4.2 2.8
+Gen7 5.5 3.5
+Gen8 4.9 3.1`;
+        showToast("Example data loaded", "success");
+      });
+
+      // Clear button
+      document.getElementById("clearBtn").addEventListener("click", () => {
+        document.getElementById("dataInput").value = "";
+        showToast("Input cleared", "success");
+      });
+
+      // Toast notification function
+      function showToast(message, type = "default") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = "toast show";
+
+        if (type === "success") {
+          toast.classList.add("success");
+          toast.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+        } else if (type === "error") {
+          toast.classList.add("error");
+          toast.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+        } else if (type === "warning") {
+          toast.classList.add("warning");
+          toast.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${message}`;
+        }
+
+        setTimeout(() => {
+          toast.classList.remove("show", "success", "error", "warning");
+        }, 3000);
+      }
+
+      // Safe division function with error handling
+      function safeDiv(a, b) {
+        if (
+          typeof a !== "number" ||
+          typeof b !== "number" ||
+          isNaN(a) ||
+          isNaN(b)
+        ) {
+          return NaN;
+        }
+        if (Math.abs(b) < 1e-12) {
+          return NaN;
+        }
+        return a / b;
+      }
+
+      // Validate input data
+      function validateInput(input) {
+        if (!input.trim()) {
+          showToast("Please paste data first!", "error");
+          return false;
+        }
+
+        const rows = input.split("\n").filter((row) => row.trim());
+        if (rows.length < 2) {
+          showToast("Please enter at least 2 genotypes", "error");
+          return false;
+        }
+
+        const validRows = rows.filter((row) => {
+          const parts = row.split(/[\s,]+/).filter((v) => v.trim() !== "");
+          return (
+            parts.length >= 3 &&
+            !isNaN(parseFloat(parts[1])) &&
+            !isNaN(parseFloat(parts[2]))
+          );
+        });
+
+        if (validRows.length < 2) {
+          showToast(
+            "Not enough valid data rows. Ensure each line has: Genotype Yp Ys",
+            "error"
+          );
+          return false;
+        }
+
+        return true;
+      }
+
+      // Sort table data
+      function sortTable(columnIndex, numeric = false, ascending = true) {
+        const table = document.querySelector("#tableOutput table");
+        if (!table) return;
+
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        rows.sort((a, b) => {
+          let aValue = a.cells[columnIndex].textContent;
+          let bValue = b.cells[columnIndex].textContent;
+
+          if (numeric) {
+            aValue = parseFloat(aValue);
+            bValue = parseFloat(bValue);
+            return ascending ? aValue - bValue : bValue - aValue;
+          } else {
+            return ascending
+              ? aValue.localeCompare(bValue)
+              : bValue.localeCompare(aValue);
+          }
+        });
+
+        // Remove existing rows
+        while (tbody.firstChild) {
+          tbody.removeChild(tbody.firstChild);
+        }
+
+        // Add sorted rows
+        tbody.append(...rows);
+      }
+
+      // Export to CSV function
+      function exportToCSV() {
+        const table = document.querySelector("#tableOutput table");
+        if (!table) {
+          showToast("No data to export", "warning");
+          return;
+        }
+
+        const rows = table.querySelectorAll("tr");
+        let csvContent = "";
+
+        rows.forEach((row) => {
+          const rowData = [];
+          row.querySelectorAll("th, td").forEach((cell) => {
+            // Remove HTML tags and extra spaces
+            let text = cell.textContent.replace(/,/g, ";").trim();
+            rowData.push(`"${text}"`);
+          });
+          csvContent += rowData.join(",") + "\n";
+        });
+
+        const blob = new Blob([csvContent], {
+          type: "text/csv;charset=utf-8;",
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", "drought_indices_data.csv");
+        link.style.visibility = "hidden";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        showToast("Data exported to CSV successfully", "success");
+      }
+
+      // Set up event listeners for sort and export buttons
+      document
+        .getElementById("exportBtn")
+        .addEventListener("click", exportToCSV);
+
+      document.getElementById("sortAlphaBtn").addEventListener("click", () => {
+        sortTable(0, false, true);
+      });
+
+      document.getElementById("sortYpBtn").addEventListener("click", () => {
+        sortTable(1, true, false);
+      });
+
+      document.getElementById("sortYsBtn").addEventListener("click", () => {
+        sortTable(2, true, false);
+      });
+
+      // Main calculation function
+      function calculate() {
+        const input = document.getElementById("dataInput").value.trim();
+
+        if (!validateInput(input)) {
+          return;
+        }
+
+        // Show loading state
+        const calculateBtn = document.getElementById("calculateBtn");
+        const originalText = calculateBtn.innerHTML;
+        calculateBtn.innerHTML = '<span class="spinner"></span> Calculating...';
+        calculateBtn.disabled = true;
+
+        // Use setTimeout to allow UI to update before calculations
+        setTimeout(() => {
+          try {
+            const rows = input
+              .split("\n")
+              .map((r) => r.split(/[\s,]+/).filter((v) => v.trim() !== ""))
+              .filter((r) => r.length >= 3);
+
+            const Ypi_values = rows.map((r) => parseFloat(r[1]));
+            const Ysi_values = rows.map((r) => parseFloat(r[2]));
+
+            const Yp_mean =
+              Ypi_values.reduce((a, b) => a + b, 0) / Ypi_values.length;
+            const Ys_mean =
+              Ysi_values.reduce((a, b) => a + b, 0) / Ysi_values.length;
+            const SI = safeDiv(1 - safeDiv(Ys_mean, Yp_mean), 1);
+
+            // Update summary output
+            document.getElementById("summaryOutput").innerHTML = `
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-value">${Ypi_values.length}</div>
+                  <div class="stat-label">Genotypes</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${Yp_mean.toFixed(4)}</div>
+                  <div class="stat-label">Mean Yp</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${Ys_mean.toFixed(4)}</div>
+                  <div class="stat-label">Mean Ys</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-value">${SI.toFixed(4)}</div>
+                  <div class="stat-label">SI Index</div>
+                </div>
+              </div>
+              <div class="highlight-box">
+                <div class="highlight-title"><i class="fas fa-star"></i> Key Metrics</div>
+                <div class="highlight-content">
+                  <div class="highlight-item">
+                    <div class="highlight-value">${(Yp_mean - Ys_mean).toFixed(
+                      4
+                    )}</div>
+                    <div class="highlight-label">Average Yield Gap</div>
+                  </div>
+                  <div class="highlight-item">
+                    <div class="highlight-value">${(
+                      safeDiv(Ys_mean, Yp_mean) * 100
+                    ).toFixed(2)}%</div>
+                    <div class="highlight-label">Stress Ratio</div>
+                  </div>
+                  <div class="highlight-item">
+                    <div class="highlight-value">${rows.length}</div>
+                    <div class="highlight-label">Total Entries</div>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            // Generate data table
+            let table = `<table>
+              <thead>
+                <tr>
+                  <th>Genotype</th>
+                  <th>Yp (Yield Potential)</th>
+                  <th>Ys (Stressed Yield)</th>
+                  <th>Difference</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>`;
+
+            rows.forEach((r) => {
+              const Ypi = parseFloat(r[1]);
+              const Ysi = parseFloat(r[2]);
+              const diff = Ypi - Ysi;
+              let status = "";
+
+              if (diff > 2) {
+                status =
+                  '<span class="index-badge badge-high">High stress</span>';
+              } else if (diff > 1) {
+                status =
+                  '<span class="index-badge badge-medium">Medium stress</span>';
+              } else {
+                status =
+                  '<span class="index-badge badge-low">Low stress</span>';
+              }
+
+              table += `<tr>
+                <td><strong>${r[0]}</strong></td>
+                <td>${Ypi.toFixed(4)}</td>
+                <td>${Ysi.toFixed(4)}</td>
+                <td>${diff.toFixed(4)}</td>
+                <td>${status}</td>
+              </tr>`;
+            });
+
+            table += `</tbody></table>`;
+            document.getElementById("tableOutput").innerHTML = table;
+
+            // Generate calculations
+            let calcHTML = "";
+
+            rows.forEach((r, index) => {
+              const genotype = r[0];
+              const Ypi = parseFloat(r[1]);
+              const Ysi = parseFloat(r[2]);
+
+              if (isNaN(Ypi) || isNaN(Ysi)) return;
+
+              const calculations = [];
+
+              // Define all indices with their formulas and calculations
+              const indexDefinitions = [
+                {
+                  name: "MP (Mean Productivity)",
+                  formula: "(Ypi+Ysi)/2",
+                  calc: `(${Ypi}+${Ysi})/2`,
+                  value: safeDiv(Ypi + Ysi, 2),
+                },
+                {
+                  name: "GMP (Geometric Mean Productivity)",
+                  formula: "√(Ypi×Ysi)",
+                  calc: `√(${Ypi}×${Ysi})`,
+                  value: Ypi >= 0 && Ysi >= 0 ? Math.sqrt(Ypi * Ysi) : NaN,
+                },
+                {
+                  name: "HM (Harmonic Mean)",
+                  formula: "(2×Ypi×Ysi)/(Ypi+Ysi)",
+                  calc: `(2×${Ypi}×${Ysi})/(${Ypi}+${Ysi})`,
+                  value: safeDiv(2 * Ypi * Ysi, Ypi + Ysi),
+                },
+                {
+                  name: "STI (Stress Tolerance Index)",
+                  formula: "(Ypi×Ysi)/(Yp_mean²)",
+                  calc: `(${Ypi}×${Ysi})/(${Yp_mean.toFixed(4)}²)`,
+                  value: safeDiv(Ypi * Ysi, Yp_mean * Yp_mean),
+                },
+                {
+                  name: "YSI (Yield Stability Index)",
+                  formula: "Ysi/Ypi",
+                  calc: `${Ysi}/${Ypi}`,
+                  value: safeDiv(Ysi, Ypi),
+                },
+                {
+                  name: "SSI (Stress Susceptibility Index)",
+                  formula: "(1 - Ysi/Ypi)/SI",
+                  calc: `(1 - ${Ysi}/${Ypi})/${SI.toFixed(4)}`,
+                  value: safeDiv(1 - safeDiv(Ysi, Ypi), SI),
+                },
+                {
+                  name: "TOL (Tolerance)",
+                  formula: "Ypi - Ysi",
+                  calc: `${Ypi}-${Ysi}`,
+                  value: Ypi - Ysi,
+                },
+                {
+                  name: "SSPI (Stress Susceptibility Percentage Index)",
+                  formula: "(Ypi - Ysi)/(2×Yp_mean)",
+                  calc: `(${Ypi}-${Ysi})/(2×${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(Ypi - Ysi, 2 * Yp_mean),
+                },
+                {
+                  name: "ATI (Abiotic Tolerance Index)",
+                  formula: "(Ypi - Ysi)/√(Yp_mean×Ys_mean)",
+                  calc: `(${Ypi}-${Ysi})/√(${Yp_mean.toFixed(
+                    4
+                  )}×${Ys_mean.toFixed(4)})`,
+                  value: safeDiv(
+                    Ypi - Ysi,
+                    Math.sqrt(Math.abs(Yp_mean * Ys_mean))
+                  ),
+                },
+                {
+                  name: "RDI (Relative Drought Index)",
+                  formula: "(Ysi/Ypi)/(Ys_mean/Yp_mean)",
+                  calc: `(${Ysi}/${Ypi})/(${Ys_mean.toFixed(
+                    4
+                  )}/${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(safeDiv(Ysi, Ypi), safeDiv(Ys_mean, Yp_mean)),
+                },
+                {
+                  name: "REI (Relative Efficiency Index)",
+                  formula: "(Ysi×Ypi)/(Yp_mean×Ys_mean)",
+                  calc: `(${Ysi}×${Ypi})/(${Yp_mean.toFixed(
+                    4
+                  )}×${Ys_mean.toFixed(4)})`,
+                  value: safeDiv(Ysi * Ypi, Yp_mean * Ys_mean),
+                },
+                {
+                  name: "SDI (Stress Deviation Index)",
+                  formula: "1-(Ysi/Ypi)",
+                  calc: `1-(${Ysi}/${Ypi})`,
+                  value: 1 - safeDiv(Ysi, Ypi),
+                },
+                {
+                  name: "YMP (Yield Mean Productivity)",
+                  formula: "(Ypi+Ysi)/2",
+                  calc: `(${Ypi}+${Ysi})/2`,
+                  value: safeDiv(Ypi + Ysi, 2),
+                },
+                {
+                  name: "K1STI",
+                  formula: "(Ypi×Ysi)/(Yp_mean×Ys_mean)",
+                  calc: `(${Ypi}×${Ysi})/(${Yp_mean.toFixed(
+                    4
+                  )}×${Ys_mean.toFixed(4)})`,
+                  value: safeDiv(Ypi * Ysi, Yp_mean * Ys_mean),
+                },
+                {
+                  name: "K2STI",
+                  formula: "(Ysi×Ys_mean)/(Yp_mean²)",
+                  calc: `(${Ysi}×${Ys_mean.toFixed(4)})/(${Yp_mean.toFixed(
+                    4
+                  )}²)`,
+                  value: safeDiv(Ysi * Ys_mean, Yp_mean * Yp_mean),
+                },
+                {
+                  name: "SNPI",
+                  formula: "(Ypi×Ysi)/(Yp_mean×Ys_mean) [=K1STI]",
+                  calc: `(${Ypi}×${Ysi})/(${Yp_mean.toFixed(
+                    4
+                  )}×${Ys_mean.toFixed(4)})`,
+                  value: safeDiv(Ypi * Ysi, Yp_mean * Ys_mean),
+                },
+                {
+                  name: "MSTI (Modified STI)",
+                  formula: "(Ysi/Ys_mean)×(Ypi/Yp_mean)",
+                  calc: `(${Ysi}/${Ys_mean.toFixed(
+                    4
+                  )})×(${Ypi}/${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(Ysi, Ys_mean) * safeDiv(Ypi, Yp_mean),
+                },
+                {
+                  name: "RSI (Relative Stress Index)",
+                  formula: "Ysi/Ys_mean",
+                  calc: `${Ysi}/${Ys_mean.toFixed(4)}`,
+                  value: safeDiv(Ysi, Ys_mean),
+                },
+                {
+                  name: "RMP (Relative Mean Productivity)",
+                  formula: "(Ysi+Ypi)/(Ys_mean+Yp_mean)",
+                  calc: `(${Ysi}+${Ypi})/(${Ys_mean.toFixed(
+                    4
+                  )}+${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(Ysi + Ypi, Ys_mean + Yp_mean),
+                },
+                {
+                  name: "GMPY",
+                  formula: "√(Ysi×Ys_mean)",
+                  calc: `√(${Ysi}×${Ys_mean.toFixed(4)})`,
+                  value:
+                    Ysi >= 0 && Ys_mean >= 0 ? Math.sqrt(Ysi * Ys_mean) : NaN,
+                },
+                {
+                  name: "HM2",
+                  formula: "(2×Ypi×Ysi)/(Ys_mean+Yp_mean)",
+                  calc: `(2×${Ypi}×${Ysi})/(${Ys_mean.toFixed(
+                    4
+                  )}+${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(2 * Ypi * Ysi, Ys_mean + Yp_mean),
+                },
+                {
+                  name: "YI (Yield Index)",
+                  formula: "Ysi/Ys_mean",
+                  calc: `${Ysi}/${Ys_mean.toFixed(4)}`,
+                  value: safeDiv(Ysi, Ys_mean),
+                },
+                {
+                  name: "DTI (Drought Tolerance Index)",
+                  formula: "(Ysi²)/(Ypi×Yp_mean)",
+                  calc: `(${Ysi}²)/(${Ypi}×${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(Ysi * Ysi, Ypi * Yp_mean),
+                },
+                {
+                  name: "DRI (Drought Response Index)",
+                  formula: "(Ysi/Ypi)×(Ys_mean/Yp_mean)",
+                  calc: `(${Ysi}/${Ypi})×(${Ys_mean.toFixed(
+                    4
+                  )}/${Yp_mean.toFixed(4)})`,
+                  value: safeDiv(Ysi, Ypi) * safeDiv(Ys_mean, Yp_mean),
+                },
+              ];
+
+              // Format calculations for display
+              indexDefinitions.forEach((def) => {
+                const valStr = isNaN(def.value) ? "NA" : def.value.toFixed(4);
+                calculations.push(`
+                  <div class="calc-box">
+                    <span class="index-name">${def.name}</span>
+                    <span class="index-formula">${def.formula}</span>
+                    <span class="index-calculation">${def.calc}</span>
+                    <span class="index-value">= ${valStr}</span>
+                  </div>
+                `);
+              });
+
+              calcHTML += `
+                <details ${index === 0 ? "open" : ""}>
+                  <summary>${genotype} <span style="color: #6c757d; font-weight: normal;">Yp: ${Ypi.toFixed(
+                2
+              )}, Ys: ${Ysi.toFixed(2)}</span></summary>
+                  <div class="calc-content">
+                    ${calculations.join("")}
+                  </div>
+                </details>
+              `;
+            });
+
+            document.getElementById("calcOutput").innerHTML = calcHTML;
+
+            // Enable export and sort buttons
+            document.getElementById("exportBtn").disabled = false;
+            document.getElementById("sortAlphaBtn").disabled = false;
+            document.getElementById("sortYpBtn").disabled = false;
+            document.getElementById("sortYsBtn").disabled = false;
+
+            showToast("Calculation completed successfully", "success");
+          } catch (error) {
+            console.error("Calculation error:", error);
+            showToast(
+              "An error occurred during calculation: " + error.message,
+              "error"
+            );
+          } finally {
+            // Restore button state
+            calculateBtn.innerHTML = originalText;
+            calculateBtn.disabled = false;
+          }
+        }, 100);
+      }
+
+      // Initialize with example data if the input is empty
+      document.addEventListener("DOMContentLoaded", () => {
+        if (!document.getElementById("dataInput").value.trim()) {
+          document.getElementById("exampleBtn").click();
+        }
+      });
+    </script>
+  </body>
+</html>
